@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[3]:
 
 
 import pandas as pd
@@ -21,6 +21,7 @@ from IPython.core.display import display, HTML
 display(HTML("<style>.container { width:100% !important; }</style>"))
 
 import td
+import p_limites
 
 
 # In[2]:
@@ -98,16 +99,19 @@ class instituicao:
 
 class Jogador_DP:
     
-    def __init__(self,t='indefinido',M=100,c=10,L=5,per=50,inf=0,sup=100,acoes=100):
+    def __init__(self,p_limites,t='indefinido',L=5,per=50,inf=0,sup=100,acoes=100):
         
         self.erro_controle=0
         
+        self.p_limites=p_limites
         self.tempo=per
         self.tipo=t
-        self.commodities=c
+        #self.commodities=c
+        self.commodities=len(self.p_limites)
         self.memoria=L
-        self.p_limites=sorted([random.randint(inf,sup) for i in range(c)])
-        self.M=M
+        #self.p_limites=sorted([random.randint(inf,sup) for i in range(c)])
+        
+        #self.M=M
         self.inf=inf
         self.sup=sup
         
@@ -138,17 +142,6 @@ class Jogador_DP:
         self.Nt=pd.DataFrame(y,columns=colunas)
         self.Nt[0:1]=100000
         self.Nt[(self.qtd_acoes-1):]=100000
-        #t=0
-        ##for i in range(0,int(len(self.Q)/3)):
-        #    self.Q[i:i+1]=t
-        #    t+=1
-       # f=20
-        #for i in range(int(len(self.Q)/3),int(2*len(self.Q)/3)):
-         #   self.Q[i:i+1]=f
-        #for i in range(int(2*len(self.Q)/3),len(self.Q)):
-         #   self.Q[i:i+1]=t
-         #   t-=1
-            
         
         self.epsilon=0.5
         self.politica_TD=[[1-self.epsilon+(self.epsilon/self.qtd_acoes),self.epsilon/self.qtd_acoes]]
@@ -763,6 +756,7 @@ class market:
                                 self.jogadores.pop(self.jogadores.index(self.instituicao.H[-1][0]))
                             #self.res_precos_executados.append((temp,time.time()-start))
                             self.res_precos_executados.append(temp)
+                            
                             self.res_spread_y.extend([self.s_p])
                             self.s_p+=1                        
        
@@ -771,10 +765,10 @@ class market:
         
 
 
-# In[1]:
+# In[ ]:
 
 
-#mercado=market2(10,tempo=50,co=5,per=20,M=201,paper_values=False,memo=30,FP_DP_TD=0)
+
 
 
 # In[2]:
@@ -783,10 +777,16 @@ class market:
 def iteracoes(mercado,it,pi=4):
     start=time.time()
     
+    negocios_periodo=[[]]
+    
     for j in range(1,it+1):
         mercado.inicio(ss_p=j,a=0.9,pi=pi)
+        tamanho=sum([len(k) for k in negocios_periodo])
+        negocios_periodo.append(mercado.res_precos_executados[tamanho:])
+        
 
     print(time.time()-start)
+    return negocios_periodo
 
 
 # In[350]:
@@ -880,7 +880,8 @@ def plot_sim(mercado):
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
 
     plt.show()
-
+    
+    return min([(np.abs(i-j),np.mean([i,j])) for i,j in zip(demanda_y,oferta_y)])
     
 
 
@@ -899,8 +900,26 @@ def belief(n,ob,oa,j):
     plt.plot(testey,teste)
 
 
-# In[4]:
+# In[ ]:
 
 
-#mercado_DP=market2(10,tempo=50,co=5,per=20,M=201,paper_values=False,memo=30,DP=True)
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
