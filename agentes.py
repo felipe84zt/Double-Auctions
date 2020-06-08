@@ -691,7 +691,7 @@ class agente_ES:
 # In[10]:
 
 
-def define_agentes(jogadores,quantidade,per,memo,agente,inf,sup,acoes,distribuicao,media,dp,alfa,gamma):
+def define_agentes(jogadores,quantidade,per,memo,inf,sup,acoes,distribuicao,media,dp,alfa,gamma):
         
         tipo='vazio'
         p_lim=p_limites.valores(inf,sup,quantidade,tipo,distribuicao,media,dp)
